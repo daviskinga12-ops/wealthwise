@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WealthWise — Your Complete Financial Intelligence Platform</title>
+<meta name="description" content="The complete financial platform for Kenyans and the world. Analyze your M-Pesa statement, check if you can afford something, evaluate any loan, plan school fees, and discover your real wealth status.">
+<meta property="og:title" content="WealthWise — Financial Intelligence Platform">
+<meta property="og:description" content="7 powerful tools. Zero cost. Built for real financial problems.">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a08;--surface:#111110;--surface2:#181816;--surface3:#202020;--surface4:#2a2a27;
+  --text:#f2efe6;--text2:#9e9b92;--text3:#5c5a54;
+  --green:#2ECC8A;--green-bg:rgba(46,204,138,.08);--green-dim:#1a7a52;
+  --red:#E85D4A;--red-bg:rgba(232,93,74,.08);
+  --amber:#F5A623;--amber-bg:rgba(245,166,35,.08);
+  --blue:#5B9EF5;--blue-bg:rgba(91,158,245,.08);
+  --purple:#B47EF5;--purple-bg:rgba(180,126,245,.08);
+  --border:rgba(255,255,255,.055);--border2:rgba(255,255,255,.11);
+  --r:14px;--rs:8px;--nav-h:60px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 10% 10%,rgba(46,204,138,.04) 0%,transparent 50%),radial-gradient(ellipse at 90% 90%,rgba(91,158,245,.03) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+/* ── TYPOGRAPHY ── */
+h1{font-size:clamp(32px,7vw,56px);font-weight:800;line-height:1.05;letter-spacing:-.025em}
+h2{font-size:clamp(22px,4vw,32px);font-weight:700;line-height:1.15}
+h3{font-size:18px;font-weight:700}
+p{font-size:15px;line-height:1.7;color:var(--text2)}
+.mono{font-family:'DM Mono',monospace}
+
+/* ── NAV ── */
+.nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:100;background:rgba(10,10,8,.85);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border)}
+.nav-inner{max-width:1100px;margin:0 auto;padding:0 1.5rem;height:100%;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.nav-brand{font-size:15px;font-weight:800;color:var(--green);cursor:pointer;letter-spacing:-.01em;flex-shrink:0}
+.nav-links{display:flex;gap:2px;flex:1;justify-content:center;flex-wrap:wrap}
+.nav-link{font-size:12px;font-weight:600;padding:6px 12px;border-radius:var(--rs);border:none;background:none;cursor:pointer;color:var(--text3);transition:color .15s,background .15s;white-space:nowrap;font-family:'Syne',sans-serif}
+.nav-link:hover{color:var(--text);background:var(--surface2)}
+.nav-link.active{color:var(--green);background:var(--green-bg)}
+.nav-cta{font-size:12px;font-weight:700;padding:7px 14px;border-radius:var(--rs);border:none;background:var(--green);color:#0a0a08;cursor:pointer;font-family:'Syne',sans-serif;white-space:nowrap;flex-shrink:0;transition:opacity .15s}
+.nav-cta:hover{opacity:.85}
+.nav-menu-btn{display:none;background:none;border:none;cursor:pointer;padding:4px;color:var(--text2)}
+
+/* ── PAGES ── */
+.page{display:none;min-height:calc(100vh - var(--nav-h));padding-top:var(--nav-h)}
+.page.active{display:block}
+.container{max-width:720px;margin:0 auto;padding:2.5rem 1.25rem 5rem;position:relative;z-index:1}
+.container-wide{max-width:1000px;margin:0 auto;padding:2.5rem 1.25rem 5rem;position:relative;z-index:1}
+
+/* ── HOME PAGE ── */
+.home-hero{padding:3rem 0 2rem}
+.home-tag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:1.25rem;font-family:'DM Mono',monospace}
+.home-title{margin-bottom:1.25rem}
+.home-title em{color:var(--green);font-style:normal}
+.home-sub{font-size:16px;color:var(--text2);line-height:1.65;max-width:580px;margin-bottom:2rem}
+.home-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:3rem}
+.btn-hero{padding:14px 24px;font-size:14px;font-weight:700;border-radius:var(--rs);border:none;background:var(--green);color:#0a0a08;cursor:pointer;font-family:'Syne',sans-serif;transition:opacity .15s}
+.btn-hero:hover{opacity:.85}
+.btn-hero-outline{padding:14px 24px;font-size:14px;font-weight:700;border-radius:var(--rs);border:0.5px solid var(--border2);background:none;color:var(--text2);cursor:pointer;font-family:'Syne',sans-serif;transition:background .15s,color .15s}
+.btn-hero-outline:hover{background:var(--surface2);color:var(--text)}
+
+/* TOOLS GRID */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:3rem}
+.tool-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:1.5rem;cursor:pointer;transition:border-color .2s,background .2s;position:relative;overflow:hidden}
+.tool-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .2s}
+.tool-card:hover{border-color:var(--border2);background:var(--surface2)}
+.tool-card:hover::before{opacity:1}
+.tool-card.green::before{background:var(--green)}
+.tool-card.red::before{background:var(--red)}
+.tool-card.amber::before{background:var(--amber)}
+.tool-card.blue::before{background:var(--blue)}
+.tool-card.purple::before{background:var(--purple)}
+.tc-icon{width:36px;height:36px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:16px}
+.tc-icon.green{background:var(--green-bg)}
+.tc-icon.red{background:var(--red-bg)}
+.tc-icon.amber{background:var(--amber-bg)}
+.tc-icon.blue{background:var(--blue-bg)}
+.tc-icon.purple{background:var(--purple-bg)}
+.tc-title{font-size:15px;font-weight:700;margin-bottom:.4rem}
+.tc-desc{font-size:13px;color:var(--text3);line-height:1.5;margin-bottom:1rem}
+.tc-badge{font-size:10px;font-family:'DM Mono',monospace;padding:3px 9px;border-radius:99px;border:0.5px solid var(--border2);color:var(--text3);display:inline-block}
+
+/* STATS BAR */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:3rem}
+.stats-bar-item{background:var(--surface);padding:1.25rem;text-align:center}
+.stats-bar-num{font-size:24px;font-weight:800;color:var(--green);font-family:'DM Mono',monospace;margin-bottom:4px}
+.stats-bar-lbl{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em}
+
+/* ── SHARED COMPONENTS ── */
+.page-header{margin-bottom:2rem}
+.page-tag{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:.6rem}
+.page-tag.green{color:var(--green)}
+.page-tag.red{color:var(--red)}
+.page-tag.amber{color:var(--amber)}
+.page-tag.blue{color:var(--blue)}
+.page-tag.purple{color:var(--purple)}
+.page-title{font-size:clamp(22px,5vw,32px);font-weight:800;margin-bottom:.5rem}
+.page-title em{font-style:normal}
+.page-title .green{color:var(--green)}
+.page-title .red{color:var(--red)}
+.page-title .amber{color:var(--amber)}
+.page-title .blue{color:var(--blue)}
+.page-sub{font-size:14px;color:var(--text2);line-height:1.6}
+
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:1.25rem}
+.card+.card{margin-top:10px}
+
+.sec-divider{display:flex;align-items:center;gap:10px;margin:1.75rem 0 1rem}
+.sec-divider-line{flex:1;height:0.5px;background:var(--border)}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);white-space:nowrap;font-family:'DM Mono',monospace}
+
+.input-group{margin-bottom:1rem}
+.input-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:.4rem;display:block}
+.input-sub{font-size:11px;color:var(--text3);margin-bottom:.4rem;font-family:'DM Mono',monospace}
+input[type=text],input[type=number],select,textarea{width:100%;padding:11px 14px;background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--rs);font-size:14px;color:var(--text);font-family:'Syne',sans-serif;outline:none;transition:border-color .15s}
+input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{border-color:var(--green)}
+select{cursor:pointer}
+select option{background:var(--surface2)}
+
+.btn-primary{width:100%;padding:13px;font-size:14px;font-weight:700;border-radius:var(--rs);border:none;background:var(--green);color:#0a0a08;cursor:pointer;font-family:'Syne',sans-serif;transition:opacity .15s;margin-top:.5rem}
+.btn-primary:hover{opacity:.88}
+.btn-secondary{width:100%;padding:12px;font-size:13px;font-weight:700;border-radius:var(--rs);border:0.5px solid var(--border2);background:none;color:var(--text2);cursor:pointer;font-family:'Syne',sans-serif;transition:background .15s;margin-top:.5rem}
+.btn-secondary:hover{background:var(--surface2);color:var(--text)}
+
+.result-box{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-top:1.25rem;display:none}
+.result-box.visible{display:block}
+
+.tag{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:4px 11px;border-radius:99px;display:inline-block;margin-bottom:.75rem}
+.tag.green{background:var(--green-bg);color:var(--green)}
+.tag.amber{background:var(--amber-bg);color:var(--amber)}
+.tag.red{background:var(--red-bg);color:var(--red)}
+.tag.blue{background:var(--blue-bg);color:var(--blue)}
+.tag.purple{background:var(--purple-bg);color:var(--purple)}
+
+.metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:1rem 0}
+.metric{background:var(--surface2);border-radius:var(--rs);padding:10px 12px;text-align:center}
+.metric-val{font-size:18px;font-weight:800;font-family:'DM Mono',monospace}
+.metric-val.green{color:var(--green)}
+.metric-val.red{color:var(--red)}
+.metric-val.amber{color:var(--amber)}
+.metric-val.blue{color:var(--blue)}
+.metric-lbl{font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.05em}
+
+.verdict-title{font-size:17px;font-weight:700;margin-bottom:.4rem}
+.verdict-body{font-size:13px;color:var(--text2);line-height:1.65}
+
+.insight-list{display:flex;flex-direction:column;gap:8px;margin-top:1rem}
+.insight-item{display:flex;gap:10px;font-size:13px;color:var(--text2);line-height:1.55;padding:10px 12px;background:var(--surface2);border-radius:var(--rs)}
+.insight-num{font-size:10px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace;min-width:18px;padding-top:2px}
+.insight-item strong{color:var(--text);font-weight:600}
+
+/* ── STATEMENT ANALYZER SPECIFIC ── */
+.dropzone{border:1.5px dashed var(--border2);border-radius:var(--r);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative;margin-bottom:.75rem}
+.dropzone:hover,.dropzone.drag{border-color:var(--green);background:var(--green-bg)}
+.dropzone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.dz-icon{width:40px;height:40px;margin:0 auto .75rem;border:1.5px solid var(--border2);border-radius:var(--rs);display:flex;align-items:center;justify-content:center}
+.dz-icon svg{width:18px;height:18px;stroke:var(--text3)}
+.dz-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.dz-sub{font-size:12px;color:var(--text3);line-height:1.5}
+.dz-sub span{color:var(--green);font-weight:600}
+.privacy-note{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--text3);margin-top:.75rem;justify-content:center}
+.privacy-dot{width:5px;height:5px;border-radius:50%;background:var(--green)}
+
+.demo-btn{width:100%;padding:11px;font-size:12px;font-weight:700;border-radius:var(--rs);border:0.5px solid var(--border2);background:none;color:var(--text3);cursor:pointer;transition:all .15s;font-family:'Syne',sans-serif;display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:1.25rem}
+.demo-btn:hover{background:var(--surface2);color:var(--text2)}
+.demo-badge{font-size:10px;padding:2px 7px;border-radius:99px;background:var(--amber-bg);color:var(--amber);font-family:'DM Mono',monospace}
+.demo-banner{background:var(--amber-bg);border:0.5px solid rgba(245,166,35,.2);border-radius:var(--rs);padding:8px 12px;font-size:11px;color:var(--amber);margin-bottom:1rem;display:none;font-family:'DM Mono',monospace}
+
+.proc-wrap{text-align:center;padding:3rem 0;display:none}
+.proc-ring{width:40px;height:40px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;margin:0 auto 1rem;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.proc-msg{font-size:13px;color:var(--text2);font-family:'DM Mono',monospace}
+
+.cat-item{background:var(--surface2);border-radius:var(--rs);padding:10px 12px;margin-bottom:7px}
+.cat-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;font-weight:600}
+.cat-bar-track{height:3px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.cat-bar-fill{height:3px;border-radius:99px}
+.cat-pct{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);margin-top:3px}
+
+.txn-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surface2);border-radius:var(--rs);margin-bottom:6px}
+.txn-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.txn-dot.out{background:var(--red)}
+.txn-dot.in{background:var(--green)}
+.txn-info{flex:1;min-width:0}
+.txn-desc{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.txn-cat{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);margin-top:1px}
+.txn-amt{font-size:12px;font-family:'DM Mono',monospace;white-space:nowrap}
+.txn-amt.out{color:var(--red)}
+.txn-amt.in{color:var(--green)}
+
+/* ALERT CARDS */
+.alert-card{border-radius:var(--r);padding:1.25rem;margin-bottom:1rem;display:none}
+.alert-card.red{background:var(--red-bg);border:0.5px solid rgba(232,93,74,.2)}
+.alert-card.amber{background:var(--amber-bg);border:0.5px solid rgba(245,166,35,.2)}
+.alert-header{display:flex;align-items:center;gap:8px;margin-bottom:.6rem}
+.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;animation:pulse 1.5s ease-in-out infinite}
+.alert-dot.red{background:var(--red)}
+.alert-dot.amber{background:var(--amber)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.alert-title{font-size:13px;font-weight:700}
+.alert-title.red{color:var(--red)}
+.alert-title.amber{color:var(--amber)}
+.alert-body{font-size:13px;color:var(--text2);line-height:1.6}
+.alert-stat{font-family:'DM Mono',monospace;font-weight:500}
+.alert-stat.red{color:var(--red)}
+
+/* IDENTITY CARD */
+.fid-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1rem}
+.fid-top{background:linear-gradient(135deg,#0d1f16,#0d1520);padding:1.25rem;position:relative}
+.fid-top::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--blue),var(--purple))}
+.fid-brand{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem}
+.fid-score-row{display:flex;align-items:baseline;gap:6px;margin-bottom:.25rem}
+.fid-score-num{font-size:38px;font-weight:800;color:var(--green);font-family:'DM Mono',monospace;line-height:1}
+.fid-score-max{font-size:14px;color:var(--text3);font-family:'DM Mono',monospace}
+.fid-grade{font-size:38px;font-weight:800;font-family:'DM Mono',monospace;line-height:1}
+.fid-bottom{padding:1.25rem}
+.fid-bar-item{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.fid-bar-name{font-size:12px;color:var(--text2);min-width:130px}
+.fid-bar-wrap{flex:1;height:4px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.fid-bar-fill{height:4px;border-radius:99px;transition:width .8s ease}
+.fid-bar-val{font-size:11px;font-family:'DM Mono',monospace;color:var(--text);min-width:24px;text-align:right}
+.fid-footer{display:flex;justify-content:space-between;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);border-top:0.5px solid var(--border);padding-top:.75rem;margin-top:.75rem}
+.fid-use-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:.75rem}
+.fid-use{font-size:10px;padding:3px 8px;border-radius:99px;border:0.5px solid var(--border2);color:var(--text3);font-family:'DM Mono',monospace}
+
+/* TRAJECTORY */
+.traj-chart{height:150px;margin:.75rem 0}
+.traj-legend{display:flex;gap:1rem;margin-bottom:.75rem}
+.traj-leg{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);font-family:'DM Mono',monospace}
+.traj-leg-line{width:12px;height:3px;border-radius:99px}
+
+/* PROJECTOR */
+.proj-wrap{background:var(--surface2);border-radius:var(--r);padding:1rem;margin-top:1rem}
+.proj-controls{display:flex;align-items:center;gap:10px;margin:.75rem 0;flex-wrap:wrap}
+.proj-label{font-size:12px;color:var(--text2)}
+input[type=range]{flex:1;min-width:80px;accent-color:var(--green)}
+.proj-pct{font-size:13px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace;min-width:32px}
+
+/* SHARE CARD */
+.share-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:1.25rem;position:relative;overflow:hidden}
+.share-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--amber))}
+
+/* ── QUIZ ── */
+.quiz-progress{margin-bottom:1.5rem}
+.quiz-prog-top{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:6px;font-family:'DM Mono',monospace}
+.quiz-prog-track{height:3px;background:var(--border);border-radius:99px;overflow:hidden}
+.quiz-prog-fill{height:3px;background:var(--green);border-radius:99px;transition:width .4s ease}
+.quiz-q-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:.4rem;font-family:'DM Mono',monospace}
+.quiz-q-text{font-size:19px;font-weight:700;line-height:1.3;margin-bottom:.4rem;color:var(--text)}
+.quiz-q-sub{font-size:13px;color:var(--text3);margin-bottom:1.25rem}
+.quiz-options{display:flex;flex-direction:column;gap:7px;margin-bottom:1.25rem}
+.quiz-opt{padding:12px 15px;border:0.5px solid var(--border2);border-radius:var(--rs);font-size:13px;color:var(--text2);cursor:pointer;text-align:left;background:none;transition:all .12s;font-family:'Syne',sans-serif}
+.quiz-opt:hover{background:var(--surface2);color:var(--text)}
+.quiz-opt.selected{border-color:var(--green);background:var(--green-bg);color:var(--green);font-weight:600}
+.quiz-nav{display:flex;justify-content:space-between;align-items:center}
+.quiz-back{font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:'Syne',sans-serif}
+.quiz-next{padding:10px 20px;font-size:13px;font-weight:700;border-radius:var(--rs);border:none;background:var(--text);color:var(--bg);cursor:pointer;opacity:.3;transition:opacity .15s;font-family:'Syne',sans-serif}
+.quiz-next.ready{opacity:1}
+
+/* ── LOAN CHECKER ── */
+.loan-app-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:6px;margin-bottom:1rem}
+.loan-app-btn{padding:8px 6px;border:0.5px solid var(--border2);border-radius:var(--rs);font-size:11px;font-weight:600;cursor:pointer;text-align:center;background:none;color:var(--text3);transition:all .15s;font-family:'Syne',sans-serif}
+.loan-app-btn:hover,.loan-app-btn.active{border-color:var(--amber);background:var(--amber-bg);color:var(--amber)}
+
+/* ── SCHOOL FEES ── */
+.term-card{background:var(--surface2);border-radius:var(--rs);padding:1rem;margin-bottom:8px;border:0.5px solid var(--border)}
+.term-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
+.term-name{font-size:13px;font-weight:700}
+.term-amount{font-size:13px;font-family:'DM Mono',monospace;color:var(--green)}
+.term-progress{margin-bottom:.4rem}
+.term-prog-bar{height:4px;background:var(--surface3);border-radius:99px;overflow:hidden;margin:.4rem 0}
+.term-prog-fill{height:4px;border-radius:99px;transition:width .6s ease}
+.term-details{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+
+/* ── BACK BUTTON ── */
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:'Syne',sans-serif;margin-bottom:1.5rem;padding:0;transition:color .15s}
+.back-btn:hover{color:var(--text)}
+.back-btn svg{width:14px;height:14px;stroke:currentColor}
+
+/* ── FOOTER ── */
+.footer{background:var(--surface);border-top:0.5px solid var(--border);padding:2rem 1.5rem;text-align:center;position:relative;z-index:1}
+.footer-brand{font-size:16px;font-weight:800;color:var(--green);margin-bottom:.5rem}
+.footer-sub{font-size:12px;color:var(--text3);margin-bottom:1rem}
+.footer-links{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.footer-link{font-size:12px;color:var(--text3);cursor:pointer;transition:color .15s;background:none;border:none;font-family:'Syne',sans-serif}
+.footer-link:hover{color:var(--green)}
+
+/* ── MOBILE ── */
+@media(max-width:640px){
+  .nav-links{display:none}
+  .nav-menu-btn{display:block}
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tools-grid{grid-template-columns:1fr}
+}
+.mobile-menu{display:none;position:fixed;inset:0;top:var(--nav-h);background:var(--bg);z-index:99;padding:1rem;flex-direction:column;gap:6px;border-top:0.5px solid var(--border)}
+.mobile-menu.open{display:flex}
+.mobile-link{font-size:14px;font-weight:600;padding:12px 16px;border-radius:var(--rs);border:none;background:none;cursor:pointer;color:var(--text2);text-align:left;font-family:'Syne',sans-serif;transition:background .15s,color .15s}
+.mobile-link:hover,.mobile-link.active{background:var(--surface2);color:var(--green)}
+</style>
+</head>
+<body>
+
+<!-- ── NAVIGATION ── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand" onclick="navigate('home')">WealthWise</div>
+    <div class="nav-links">
+      <button class="nav-link active" onclick="navigate('home')">Home</button>
+      <button class="nav-link" onclick="navigate('analyzer')">Statement Analyzer</button>
+      <button class="nav-link" onclick="navigate('afford')">Can I Afford This?</button>
+      <button class="nav-link" onclick="navigate('loan')">Loan Checker</button>
+      <button class="nav-link" onclick="navigate('school')">School Fees Planner</button>
+      <button class="nav-link" onclick="navigate('quiz')">Wealth Quiz</button>
+    </div>
+    <button class="nav-cta" onclick="navigate('analyzer')">Analyze Statement</button>
+    <button class="nav-menu-btn" onclick="toggleMenu()" id="menu-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-link" onclick="navigate('home');toggleMenu()">Home</button>
+  <button class="mobile-link" onclick="navigate('analyzer');toggleMenu()">Statement Analyzer</button>
+  <button class="mobile-link" onclick="navigate('afford');toggleMenu()">Can I Afford This?</button>
+  <button class="mobile-link" onclick="navigate('loan');toggleMenu()">Loan Checker</button>
+  <button class="mobile-link" onclick="navigate('school');toggleMenu()">School Fees Planner</button>
+  <button class="mobile-link" onclick="navigate('quiz');toggleMenu()">Wealth Quiz</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: HOME
+══════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="container-wide">
+    <div class="home-hero">
+      <div class="home-tag">WealthWise Financial Platform</div>
+      <h1 class="home-title">The financial tools<br>Kenya — and the world — <em>actually needs.</em></h1>
+      <p class="home-sub">Real decisions. Real money. Real answers. Six powerful tools that diagnose your finances, detect debt traps, plan for school fees, evaluate any loan, and show you your true financial future — all free, all private.</p>
+      <div class="home-actions">
+        <button class="btn-hero" onclick="navigate('analyzer')">Analyze My Statement</button>
+        <button class="btn-hero-outline" onclick="navigate('quiz')">Take the Wealth Quiz</button>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stats-bar-item"><div class="stats-bar-num">6</div><div class="stats-bar-lbl">Financial tools</div></div>
+      <div class="stats-bar-item"><div class="stats-bar-num">100%</div><div class="stats-bar-lbl">Private & free</div></div>
+      <div class="stats-bar-item"><div class="stats-bar-num">0</div><div class="stats-bar-lbl">Data uploaded</div></div>
+      <div class="stats-bar-item"><div class="stats-bar-num">∞</div><div class="stats-bar-lbl">Uses allowed</div></div>
+    </div>
+
+    <div class="tools-grid">
+      <div class="tool-card green" onclick="navigate('analyzer')">
+        <div class="tc-icon green">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2ECC8A" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="tc-title">M-Pesa Statement Analyzer</div>
+        <div class="tc-desc">Upload your M-Pesa or bank statement. Get a full breakdown with your Financial Identity Card, loan spiral detection, invisible tax, and 12-month trajectory.</div>
+        <div class="tc-badge">Upload PDF → instant results</div>
+      </div>
+      <div class="tool-card amber" onclick="navigate('afford')">
+        <div class="tc-icon amber">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F5A623" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="tc-title">Can I Afford This?</div>
+        <div class="tc-desc">Type one number. Get an instant honest answer — whether you can afford it, the real long-term cost, and what to do if you can't.</div>
+        <div class="tc-badge">Instant decision · no signup</div>
+      </div>
+      <div class="tool-card red" onclick="navigate('loan')">
+        <div class="tc-icon red">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E85D4A" stroke-width="2"><polyline points="23 7 13 17 8 12 1 19"/><polyline points="17 7 23 7 23 13"/></svg>
+        </div>
+        <div class="tc-title">Loan Checker</div>
+        <div class="tc-desc">Enter any loan — Tala, Branch, bank, SACCO, anything. Get the true total cost, monthly burden score, and a plain verdict: take it, negotiate, or run.</div>
+        <div class="tc-badge">Works with any lender</div>
+      </div>
+      <div class="tool-card blue" onclick="navigate('school')">
+        <div class="tc-icon blue">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5B9EF5" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <div class="tc-title">School Fees Planner</div>
+        <div class="tc-desc">School fees hit three times a year like a wall. Enter your children's fee amounts and get a week-by-week savings plan so fees never arrive as a shock again.</div>
+        <div class="tc-badge">Term-by-term breakdown</div>
+      </div>
+      <div class="tool-card purple" onclick="navigate('quiz')">
+        <div class="tc-icon purple">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B47EF5" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div class="tc-title">Lifestyle Rich or Actually Rich?</div>
+        <div class="tc-desc">7 brutally honest questions. One AI-powered verdict. Find out if your money is building wealth — or just building an image.</div>
+        <div class="tc-badge">2 minutes · shareable result</div>
+      </div>
+      <div class="tool-card" style="cursor:default;opacity:.6">
+        <div class="tc-icon" style="background:var(--surface3)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </div>
+        <div class="tc-title" style="color:var(--text3)">More tools coming</div>
+        <div class="tc-desc">Investment calculator, chama tracker, and budget builder are in development. Follow WealthWise to be first.</div>
+        <div class="tc-badge">Coming soon</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:1rem 0 2rem">
+      <p style="font-size:13px;color:var(--text3);margin-bottom:1rem">Follow WealthWise for financial education that actually works</p>
+      <a href="https://youtube.com/@wealthwisefinancestate" target="_blank" style="font-size:13px;color:var(--green);font-weight:700;text-decoration:none">@wealthwisefinancestate →</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-brand">WealthWise</div>
+    <div class="footer-sub">Building wealth one decision at a time. Free. Private. Always.</div>
+    <div class="footer-links">
+      <button class="footer-link" onclick="navigate('analyzer')">Statement Analyzer</button>
+      <button class="footer-link" onclick="navigate('afford')">Can I Afford This?</button>
+      <button class="footer-link" onclick="navigate('loan')">Loan Checker</button>
+      <button class="footer-link" onclick="navigate('school')">School Fees Planner</button>
+      <button class="footer-link" onclick="navigate('quiz')">Wealth Quiz</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: STATEMENT ANALYZER
+══════════════════════════════════════════ -->
+<div class="page" id="page-analyzer">
+  <div class="container">
+    <button class="back-btn" onclick="navigate('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to home
+    </button>
+    <div class="page-header">
+      <div class="page-tag green">M-Pesa Statement Analyzer</div>
+      <div class="page-title">Your statement. <span class="green">Your truth.</span> Instantly.</div>
+      <p class="page-sub">Upload your M-Pesa or bank statement PDF. Get a full breakdown — Financial Identity Card, loan spiral detection, invisible tax calculator, 12-month trajectory, and shareable result card. Nothing leaves your device.</p>
+    </div>
+
+    <div id="az-upload">
+      <div class="dropzone" id="az-dropzone">
+        <input type="file" accept=".pdf" id="az-file-input">
+        <div class="dz-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="12" y1="18" x2="12" y2="12"/>
+            <polyline points="9 15 12 12 15 15"/>
+          </svg>
+        </div>
+        <div class="dz-title">Drop your statement here</div>
+        <div class="dz-sub">M-Pesa PDF · most bank statements<br><span>Click to browse</span> or drag & drop</div>
+        <div class="privacy-note"><div class="privacy-dot"></div>Analyzed 100% in your browser. Nothing uploaded.</div>
+      </div>
+      <button class="demo-btn" onclick="azRunDemo()">Try with sample M-Pesa data <span class="demo-badge">demo</span></button>
+    </div>
+
+    <div class="proc-wrap" id="az-proc">
+      <div class="proc-ring"></div>
+      <div class="proc-msg" id="az-proc-msg">Reading your statement...</div>
+    </div>
+
+    <div id="az-results" style="display:none">
+      <div class="demo-banner" id="az-demo-banner">Demo mode — sample M-Pesa data. Upload your real statement for actual results.</div>
+      <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);margin-bottom:.4rem" id="az-filename"></div>
+      <div style="font-size:20px;font-weight:800;margin-bottom:.3rem" id="az-verdict-title"></div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:1.25rem;font-family:'DM Mono',monospace" id="az-verdict-sub"></div>
+
+      <div class="metric-grid" id="az-metrics"></div>
+
+      <!-- Alerts -->
+      <div class="alert-card red" id="az-fuliza-alert">
+        <div class="alert-header"><div class="alert-dot red"></div><div class="alert-title red">Fuliza debt loop detected</div></div>
+        <div class="alert-body" id="az-fuliza-body"></div>
+      </div>
+      <div class="alert-card red" id="az-spiral-alert">
+        <div class="alert-header"><div class="alert-dot red"></div><div class="alert-title red">Multi-loan spiral detected</div></div>
+        <div class="alert-body" id="az-spiral-body"></div>
+        <div class="metric-grid" style="margin-top:.75rem" id="az-spiral-metrics"></div>
+        <div id="az-escape" style="margin-top:.75rem"></div>
+      </div>
+      <div class="alert-card amber" id="az-tax-alert">
+        <div class="alert-header"><div class="alert-dot amber"></div><div class="alert-title amber">Your invisible tax bill</div></div>
+        <div class="alert-body" id="az-tax-body"></div>
+      </div>
+
+      <div class="card" id="az-verdict-card" style="margin-bottom:1rem"></div>
+
+      <!-- Identity Card -->
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-label">Financial Identity Card</div><div class="sec-divider-line"></div></div>
+      <div class="fid-card" id="az-fid-card"></div>
+
+      <!-- Trajectory -->
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-label">Financial Trajectory</div><div class="sec-divider-line"></div></div>
+      <div class="card">
+        <div style="font-size:14px;font-weight:700;margin-bottom:.25rem">Where your money is heading</div>
+        <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:.75rem" id="az-traj-sub"></div>
+        <div class="traj-chart"><canvas id="az-traj-canvas" style="width:100%;height:150px"></canvas></div>
+        <div class="traj-legend">
+          <div class="traj-leg"><div class="traj-leg-line" style="background:var(--red)"></div>Current path</div>
+          <div class="traj-leg"><div class="traj-leg-line" style="background:var(--green)"></div>Optimized path</div>
+        </div>
+        <div class="metric-grid" id="az-traj-milestones"></div>
+      </div>
+
+      <!-- Spending -->
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-label">Spending Breakdown</div><div class="sec-divider-line"></div></div>
+      <div id="az-categories"></div>
+
+      <!-- Transactions -->
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-label">Biggest Transactions</div><div class="sec-divider-line"></div></div>
+      <div id="az-transactions"></div>
+
+      <!-- Projector -->
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-label">What If Projector</div><div class="sec-divider-line"></div></div>
+      <div class="proj-wrap">
+        <div style="font-size:13px;font-weight:700;margin-bottom:.2rem">What if you cut your top spend?</div>
+        <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="az-proj-sub"></div>
+        <div class="proj-controls">
+          <span class="proj-label">Cut by</span>
+          <input type="range" min="5" max="50" value="20" step="5" id="az-proj-slider" oninput="azUpdateProj(this.value)">
+          <span class="proj-pct" id="az-proj-pct">20%</span>
+        </div>
+        <div class="metric-grid" id="az-proj-result"></div>
+      </div>
+
+      <!-- Share Card -->
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-label">Shareable Result Card</div><div class="sec-divider-line"></div></div>
+      <div class="share-card" id="az-share-card"></div>
+
+      <!-- Insights -->
+      <div class="sec-divider"><div class="sec-divider-line"></div><div class="sec-label">WealthWise Insights</div><div class="sec-divider-line"></div></div>
+      <div class="insight-list" id="az-insights"></div>
+
+      <div style="display:flex;gap:8px;margin-top:1.5rem">
+        <button class="btn-secondary" id="az-copy-btn" onclick="azCopyResult()" style="width:auto;flex:1;margin-top:0">Copy & share result</button>
+        <button class="btn-primary" onclick="azReset()" style="width:auto;flex:1;margin-top:0">Analyze another</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: CAN I AFFORD THIS?
+══════════════════════════════════════════ -->
+<div class="page" id="page-afford">
+  <div class="container">
+    <button class="back-btn" onclick="navigate('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to home
+    </button>
+    <div class="page-header">
+      <div class="page-tag amber">Real-Time Decision Engine</div>
+      <div class="page-title">Can I <span class="amber">afford</span> this?</div>
+      <p class="page-sub">The question you ask a hundred times a month — but never have a real answer for. Type the numbers and get the honest truth in seconds.</p>
+    </div>
+
+    <div class="card">
+      <div class="input-group">
+        <label class="input-label">What does it cost? (KES)</label>
+        <div class="input-sub">The total price — item, service, trip, anything</div>
+        <input type="number" id="af-cost" placeholder="e.g. 15000" oninput="afCalc()">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Your monthly income (KES)</label>
+        <div class="input-sub">Take-home after tax, all sources</div>
+        <input type="number" id="af-income" placeholder="e.g. 50000" oninput="afCalc()">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Your monthly fixed costs (KES)</label>
+        <div class="input-sub">Rent, utilities, loan repayments, school fees</div>
+        <input type="number" id="af-fixed" placeholder="e.g. 30000" oninput="afCalc()">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Is this a want or a need?</label>
+        <select id="af-type" onchange="afCalc()">
+          <option value="want">Want — nice to have</option>
+          <option value="need">Need — essential expense</option>
+          <option value="investment">Investment — will earn returns</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="result-box" id="af-result">
+      <div id="af-tag-wrap"></div>
+      <div class="verdict-title" id="af-verdict-title"></div>
+      <div class="verdict-body" id="af-verdict-body" style="margin-top:.4rem"></div>
+      <div class="metric-grid" id="af-metrics" style="margin-top:1rem"></div>
+      <div class="insight-list" id="af-insights"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: LOAN CHECKER
+══════════════════════════════════════════ -->
+<div class="page" id="page-loan">
+  <div class="container">
+    <button class="back-btn" onclick="navigate('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to home
+    </button>
+    <div class="page-header">
+      <div class="page-tag red">Loan Checker</div>
+      <div class="page-title">Should I take <span class="red">this loan?</span></div>
+      <p class="page-sub">Every loan looks affordable upfront. Most are not. Enter any loan's details and see the true cost — what you actually pay back, what it costs per month, and whether to take it, negotiate it, or walk away.</p>
+    </div>
+
+    <div class="card">
+      <div class="input-group">
+        <label class="input-label">Quick-select a lender</label>
+        <div class="loan-app-grid">
+          <button class="loan-app-btn" onclick="lcSelectApp('Fuliza',14)">Fuliza</button>
+          <button class="loan-app-btn" onclick="lcSelectApp('Tala',15)">Tala</button>
+          <button class="loan-app-btn" onclick="lcSelectApp('Branch',17)">Branch</button>
+          <button class="loan-app-btn" onclick="lcSelectApp('Zenka',12)">Zenka</button>
+          <button class="loan-app-btn" onclick="lcSelectApp('Timiza',10)">Timiza</button>
+          <button class="loan-app-btn" onclick="lcSelectApp('SACCO',1.5)">SACCO</button>
+          <button class="loan-app-btn" onclick="lcSelectApp('Bank',12)">Bank</button>
+          <button class="loan-app-btn" onclick="lcSelectApp('Other',0)">Other</button>
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Loan amount (KES)</label>
+        <input type="number" id="lc-amount" placeholder="e.g. 10000" oninput="lcCalc()">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Interest rate (%)</label>
+        <div class="input-sub" id="lc-rate-hint">Enter monthly rate or select a lender above to auto-fill</div>
+        <input type="number" id="lc-rate" placeholder="e.g. 15" step="0.1" oninput="lcCalc()">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Repayment period</label>
+        <select id="lc-term" onchange="lcCalc()">
+          <option value="1">1 month</option>
+          <option value="3">3 months</option>
+          <option value="6">6 months</option>
+          <option value="12">12 months</option>
+          <option value="24">24 months</option>
+          <option value="36">36 months</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label class="input-label">Your monthly income (KES)</label>
+        <div class="input-sub">Used to calculate your affordability score</div>
+        <input type="number" id="lc-income" placeholder="e.g. 50000" oninput="lcCalc()">
+      </div>
+    </div>
+
+    <div class="result-box" id="lc-result">
+      <div id="lc-tag-wrap"></div>
+      <div class="verdict-title" id="lc-verdict-title"></div>
+      <div class="verdict-body" id="lc-verdict-body" style="margin-top:.4rem"></div>
+      <div class="metric-grid" id="lc-metrics" style="margin-top:1rem"></div>
+      <div class="insight-list" id="lc-insights" style="margin-top:1rem"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: SCHOOL FEES PLANNER
+══════════════════════════════════════════ -->
+<div class="page" id="page-school">
+  <div class="container">
+    <button class="back-btn" onclick="navigate('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to home
+    </button>
+    <div class="page-header">
+      <div class="page-tag blue">School Fees Planner</div>
+      <div class="page-title">Never be <span class="blue">surprised</span> by school fees again.</div>
+      <p class="page-sub">School fees arrive three times a year on the exact same dates — yet they hit like a wall every time. Enter your details and get a week-by-week savings plan that turns a crisis into a routine.</p>
+    </div>
+
+    <div class="card">
+      <div class="input-group">
+        <label class="input-label">Your monthly income (KES)</label>
+        <input type="number" id="sf-income" placeholder="e.g. 60000" oninput="sfCalc()">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Number of children in school</label>
+        <select id="sf-children" onchange="sfUpdateChildren();sfCalc()">
+          <option value="1">1 child</option>
+          <option value="2">2 children</option>
+          <option value="3">3 children</option>
+          <option value="4">4 children</option>
+        </select>
+      </div>
+      <div id="sf-children-inputs"></div>
+      <div class="input-group">
+        <label class="input-label">Current month</label>
+        <select id="sf-month" onchange="sfCalc()">
+          <option value="1">January</option><option value="2">February</option>
+          <option value="3">March</option><option value="4">April</option>
+          <option value="5">May</option><option value="6">June</option>
+          <option value="7">July</option><option value="8">August</option>
+          <option value="9">September</option><option value="10">October</option>
+          <option value="11">November</option><option value="12">December</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="result-box" id="sf-result">
+      <div id="sf-tag-wrap"></div>
+      <div class="verdict-title" id="sf-verdict-title"></div>
+      <div class="verdict-body" id="sf-verdict-body" style="margin-top:.4rem;margin-bottom:1rem"></div>
+      <div class="metric-grid" id="sf-metrics"></div>
+      <div class="sec-divider" style="margin:1.25rem 0 .75rem"><div class="sec-divider-line"></div><div class="sec-label">Term-by-term plan</div><div class="sec-divider-line"></div></div>
+      <div id="sf-terms"></div>
+      <div class="insight-list" id="sf-insights" style="margin-top:1rem"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: WEALTH QUIZ
+══════════════════════════════════════════ -->
+<div class="page" id="page-quiz">
+  <div class="container">
+    <button class="back-btn" onclick="navigate('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>Back to home
+    </button>
+
+    <!-- INTRO -->
+    <div id="qz-intro">
+      <div class="page-header">
+        <div class="page-tag purple">Wealth Quiz</div>
+        <div class="page-title">Lifestyle rich or <span style="color:var(--purple)">actually rich?</span></div>
+        <p class="page-sub">7 honest questions. One brutally accurate verdict. Find out if your money is working for you — or just working hard to impress people.</p>
+      </div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="metric-grid">
+          <div class="metric"><div class="metric-val purple">7</div><div class="metric-lbl">Questions</div></div>
+          <div class="metric"><div class="metric-val purple">2 min</div><div class="metric-lbl">To complete</div></div>
+          <div class="metric"><div class="metric-val purple">AI</div><div class="metric-lbl">Verdict</div></div>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="qzStart()">Start the quiz</button>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="qz-quiz" style="display:none">
+      <div class="quiz-progress">
+        <div class="quiz-prog-top">
+          <span id="qz-counter">Question 1 of 7</span>
+          <span id="qz-pct">0%</span>
+        </div>
+        <div class="quiz-prog-track"><div class="quiz-prog-fill" id="qz-prog-fill" style="width:0%"></div></div>
+      </div>
+      <div class="quiz-q-label" id="qz-q-label"></div>
+      <div class="quiz-q-text" id="qz-q-text"></div>
+      <div class="quiz-q-sub" id="qz-q-sub"></div>
+      <div class="quiz-options" id="qz-options"></div>
+      <div class="quiz-nav">
+        <button class="quiz-back" onclick="qzPrev()">Back</button>
+        <button class="quiz-next" id="qz-next" onclick="qzNext()">Continue</button>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="qz-result" style="display:none">
+      <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);margin-bottom:.75rem">WealthWise — your verdict</div>
+      <div id="qz-result-tag"></div>
+      <div style="font-size:22px;font-weight:800;margin-bottom:.75rem;line-height:1.2" id="qz-result-title"></div>
+      <div class="metric-grid" id="qz-result-metrics"></div>
+      <div class="card" style="margin-top:1rem">
+        <div style="font-size:14px;color:var(--text2);line-height:1.7" id="qz-result-roast"></div>
+      </div>
+      <div class="sec-divider" style="margin:1.25rem 0 .75rem"><div class="sec-divider-line"></div><div class="sec-label">3 moves to change the trajectory</div><div class="sec-divider-line"></div></div>
+      <div class="insight-list" id="qz-result-fixes"></div>
+      <div style="display:flex;gap:8px;margin-top:1.5rem">
+        <button class="btn-secondary" id="qz-copy-btn" onclick="qzCopy()" style="width:auto;flex:1;margin-top:0">Copy & share</button>
+        <button class="btn-primary" onclick="qzRestart()" style="width:auto;flex:1;margin-top:0">Retake quiz</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function navigate(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l=>{if(l.textContent.toLowerCase().includes(page)||page==='home'&&l.textContent==='Home')l.classList.add('active');});
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(page==='school')sfUpdateChildren();
+  if(page==='quiz'&&document.getElementById('qz-intro').style.display==='none'&&document.getElementById('qz-result').style.display==='none'){}
+}
+
+function toggleMenu(){
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function fmt(n){return 'KES '+Math.round(Math.abs(n)).toLocaleString();}
+function fmtShort(n){const a=Math.abs(n);if(a>=1000000)return(a/1000000).toFixed(1)+'M';if(a>=1000)return(a/1000).toFixed(1)+'K';return Math.round(a).toString();}
+function parseA(s){return parseFloat((s||'').replace(/[^0-9.]/g,''))||0;}
+
+// ══════════════════════════════════════════
+// CAN I AFFORD THIS?
+// ══════════════════════════════════════════
+function afCalc(){
+  const cost=parseFloat(document.getElementById('af-cost').value)||0;
+  const income=parseFloat(document.getElementById('af-income').value)||0;
+  const fixed=parseFloat(document.getElementById('af-fixed').value)||0;
+  const type=document.getElementById('af-type').value;
+  const result=document.getElementById('af-result');
+  if(!cost||!income){result.classList.remove('visible');return;}
+  result.classList.add('visible');
+
+  const disposable=income-fixed;
+  const costPct=income>0?(cost/income*100):0;
+  const disposPct=disposable>0?(cost/disposable*100):100;
+  const monthsToSave=disposable>0?Math.ceil(cost/(disposable*0.2)):99;
+
+  let tagClass,tagText,title,body;
+  if(type==='investment'){
+    tagClass='blue';tagText='Potential Investment';
+    title='This could work — but only if the return is real.';
+    body=`At ${fmt(cost)}, this is ${costPct.toFixed(0)}% of your monthly income. For an investment, that's only sensible if the return timeline is clear and the risk is understood. Never invest money you'd need within 3 months.`;
+  } else if(disposable<=0){
+    tagClass='red';tagText='Cannot Afford This';
+    title='Your fixed costs already exceed your income.';
+    body=`You have ${fmt(Math.abs(disposable))} less disposable income than your fixed costs suggest. Adding ${fmt(cost)} to this situation makes it worse. The priority is reducing fixed costs or increasing income before any discretionary spending.`;
+  } else if(disposPct<=15&&type==='need'){
+    tagClass='green';tagText='Affordable';
+    title='Yes — this fits within your budget.';
+    body=`At ${fmt(cost)}, this is ${disposPct.toFixed(0)}% of your disposable income (${fmt(disposable)}). For a need, this is a reasonable spend. It won't break your budget if your other spending stays controlled.`;
+  } else if(disposPct<=25&&type==='want'){
+    tagClass='amber';tagText='Proceed with Caution';
+    title='Technically yes — but think twice.';
+    body=`This costs ${disposPct.toFixed(0)}% of your disposable income. For a want, that's on the high side. If you choose to spend this, cut an equivalent amount somewhere else this month so your overall balance stays healthy.`;
+  } else if(disposPct<=50){
+    tagClass='amber';tagText='Stretch Spend';
+    title='You can technically cover this — but it will hurt.';
+    body=`${fmt(cost)} is ${disposPct.toFixed(0)}% of your available ${fmt(disposable)}. This leaves very little buffer for unexpected costs this month. Consider saving for it over ${monthsToSave} month${monthsToSave>1?'s':''} by setting aside 20% of disposable income.`;
+  } else {
+    tagClass='red';tagText='Cannot Afford This Now';
+    title='Not right now — the numbers say no.';
+    body=`${fmt(cost)} would consume more than half your disposable income (${fmt(disposable)}). This creates dangerous financial exposure. Save for it instead — at 20% of disposable income, you'd reach this in ${monthsToSave} month${monthsToSave>1?'s':''}.`;
+  }
+
+  document.getElementById('af-tag-wrap').innerHTML=`<div class="tag ${tagClass}">${tagText}</div>`;
+  document.getElementById('af-verdict-title').textContent=title;
+  document.getElementById('af-verdict-body').textContent=body;
+  document.getElementById('af-metrics').innerHTML=`
+    <div class="metric"><div class="metric-val ${disposable>0?'green':'red'}">${fmtShort(disposable)}</div><div class="metric-lbl">Disposable</div></div>
+    <div class="metric"><div class="metric-val ${costPct>30?'red':costPct>15?'amber':'green'}">${costPct.toFixed(0)}%</div><div class="metric-lbl">Of income</div></div>
+    <div class="metric"><div class="metric-val amber">${monthsToSave>12?'12mo+':monthsToSave+'mo'}</div><div class="metric-lbl">To save for it</div></div>`;
+
+  const ins=[];
+  if(type==='want'&&disposPct>20)ins.push(`The 24-hour rule: wait one full day before purchasing anything that costs more than <strong>5% of your monthly income</strong>. Most wants lose urgency by morning.`);
+  if(monthsToSave>1&&monthsToSave<12)ins.push(`Set up a dedicated savings pocket for this goal. Transfer <strong>${fmt(disposable*0.2)}/month</strong> automatically and reach it in ${monthsToSave} months without stress.`);
+  if(disposable<income*0.2)ins.push(`Your fixed costs are consuming more than 80% of your income. Before new spending, the priority is finding one fixed cost to reduce — even by <strong>10%</strong> creates breathing room.`);
+  document.getElementById('af-insights').innerHTML=ins.map((i,n)=>`<div class="insight-item"><div class="insight-num">0${n+1}</div><div>${i}</div></div>`).join('');
+}
+
+// ══════════════════════════════════════════
+// LOAN CHECKER
+// ══════════════════════════════════════════
+let lcSelectedApp='';
+function lcSelectApp(name,rate){
+  lcSelectedApp=name;
+  document.querySelectorAll('.loan-app-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('lc-rate').value=rate;
+  document.getElementById('lc-rate-hint').textContent=`Auto-filled: typical ${name} monthly rate. Adjust if your offer differs.`;
+  lcCalc();
+}
+
+function lcCalc(){
+  const amount=parseFloat(document.getElementById('lc-amount').value)||0;
+  const rate=parseFloat(document.getElementById('lc-rate').value)||0;
+  const term=parseInt(document.getElementById('lc-term').value)||1;
+  const income=parseFloat(document.getElementById('lc-income').value)||0;
+  const result=document.getElementById('lc-result');
+  if(!amount||!rate){result.classList.remove('visible');return;}
+  result.classList.add('visible');
+
+  const totalInterest=amount*(rate/100)*term;
+  const totalRepay=amount+totalInterest;
+  const monthlyPayment=totalRepay/term;
+  const affordPct=income>0?(monthlyPayment/income*100):0;
+
+  let tagClass,tagText,title,body;
+  const effectiveAnnual=rate*12;
+  if(effectiveAnnual>200){
+    tagClass='red';tagText='Run From This';
+    title=`This loan costs ${effectiveAnnual.toFixed(0)}% per year. Walk away.`;
+    body=`At ${rate}% per month, this is predatory lending. You'll repay ${fmt(totalRepay)} for a ${fmt(amount)} loan — ${fmt(totalInterest)} in pure fees. Find a SACCO, ask family, or delay the expense. This loan will make your situation worse.`;
+  } else if(effectiveAnnual>100){
+    tagClass='red';tagText='Very Dangerous';
+    title=`${effectiveAnnual.toFixed(0)}% annual interest. This is a last resort only.`;
+    body=`You'll repay ${fmt(totalRepay)} for ${fmt(amount)} borrowed. That's ${fmt(totalInterest)} in interest over ${term} month${term>1?'s':''}. Only take this if it's a genuine emergency and no other option exists. Have a clear repayment plan before accepting.`;
+  } else if(affordPct>30){
+    tagClass='red';tagText='Cannot Sustain This';
+    title='The monthly payment exceeds what you can safely manage.';
+    body=`At ${fmt(monthlyPayment)}/month, this loan consumes ${affordPct.toFixed(0)}% of your income. Financial safety limits say no more than 30% of income should go to debt repayment. At this level, one missed payment creates a spiral.`;
+  } else if(affordPct>20||effectiveAnnual>60){
+    tagClass='amber';tagText='Negotiate Before Accepting';
+    title='The terms are workable but need improvement.';
+    body=`Total repayment is ${fmt(totalRepay)}. Before accepting, ask for a lower rate, longer term to reduce monthly payment, or a smaller amount. Even reducing the rate by 2% saves ${fmt(amount*(rate/100-0.02)*term)}.`;
+  } else {
+    tagClass='green';tagText='Manageable — But Stay Alert';
+    title='This loan is within reasonable limits.';
+    body=`At ${fmt(monthlyPayment)}/month for ${term} months, this is ${affordPct.toFixed(0)}% of your income — within the safe zone. Ensure repayments are set up automatically so you never miss one, which could trigger penalty fees.`;
+  }
+
+  document.getElementById('lc-tag-wrap').innerHTML=`<div class="tag ${tagClass}">${tagText}</div>`;
+  document.getElementById('lc-verdict-title').textContent=title;
+  document.getElementById('lc-verdict-body').textContent=body;
+  document.getElementById('lc-metrics').innerHTML=`
+    <div class="metric"><div class="metric-val red">${fmt(totalRepay)}</div><div class="metric-lbl">Total repayment</div></div>
+    <div class="metric"><div class="metric-val amber">${fmt(totalInterest)}</div><div class="metric-lbl">Total interest</div></div>
+    <div class="metric"><div class="metric-val ${affordPct>30?'red':affordPct>20?'amber':'green'}">${affordPct.toFixed(0)}%</div><div class="metric-lbl">Of income/month</div></div>`;
+
+  const ins=[];
+  ins.push(`You are paying <strong>${fmt(totalInterest)}</strong> to borrow <strong>${fmt(amount)}</strong>. That's ${((totalInterest/amount)*100).toFixed(0)}% of the loan amount in fees alone.`);
+  if(effectiveAnnual>80)ins.push(`The equivalent annual rate is <strong>${effectiveAnnual.toFixed(0)}%</strong>. A SACCO loan at 12% annually would cost you <strong>${fmt(amount*(0.01)*term)}</strong> in interest instead of ${fmt(totalInterest)}.`);
+  ins.push(`Pay more than the minimum when possible. Every extra <strong>KES 500</strong> toward principal reduces total interest paid and shortens your debt timeline.`);
+  document.getElementById('lc-insights').innerHTML=ins.map((i,n)=>`<div class="insight-item"><div class="insight-num">0${n+1}</div><div>${i}</div></div>`).join('');
+}
+
+// ══════════════════════════════════════════
+// SCHOOL FEES PLANNER
+// ══════════════════════════════════════════
+function sfUpdateChildren(){
+  const n=parseInt(document.getElementById('sf-children').value)||1;
+  const wrap=document.getElementById('sf-children-inputs');
+  wrap.innerHTML='';
+  for(let i=1;i<=n;i++){
+    wrap.innerHTML+=`<div class="input-group">
+      <label class="input-label">Child ${i} — annual school fees (KES)</label>
+      <div class="input-sub">Total for all 3 terms combined</div>
+      <input type="number" id="sf-child-${i}" placeholder="e.g. 45000" oninput="sfCalc()">
+    </div>`;
+  }
+}
+
+function sfCalc(){
+  const income=parseFloat(document.getElementById('sf-income').value)||0;
+  const n=parseInt(document.getElementById('sf-children').value)||1;
+  const month=parseInt(document.getElementById('sf-month').value)||new Date().getMonth()+1;
+  let totalAnnual=0;
+  const children=[];
+  for(let i=1;i<=n;i++){
+    const fees=parseFloat(document.getElementById('sf-child-'+i)?.value)||0;
+    totalAnnual+=fees;
+    if(fees>0)children.push({id:i,fees});
+  }
+  const result=document.getElementById('sf-result');
+  if(!income||totalAnnual===0){result.classList.remove('visible');return;}
+  result.classList.add('visible');
+
+  // Term dates (Kenyan school calendar)
+  const TERMS=[
+    {name:'Term 1 2026',month:1,weeksBefore:8},
+    {name:'Term 2 2026',month:4,weeksBefore:12},
+    {name:'Term 3 2026',month:9,weeksBefore:12},
+  ];
+
+  const weeklyIncome=income/4.33;
+  const feesPerTerm=totalAnnual/3;
+  const requiredWeeklySaving=feesPerTerm/12;
+  const savingsPct=income>0?(requiredWeeklySaving*4.33/income*100):0;
+
+  let tagClass,tagText,title,body;
+  if(savingsPct>30){
+    tagClass='red';tagText='High Pressure';
+    title='School fees will require serious planning.';
+    body=`Your annual fees total ${fmt(totalAnnual)} — ${fmt(feesPerTerm)} per term. To cover this without borrowing, you need to save ${fmt(requiredWeeklySaving*4.33)}/month (${savingsPct.toFixed(0)}% of income). This is tight. Consider a school fees SACCO or M-Shwari lock savings to make it automatic.`;
+  } else if(savingsPct>15){
+    tagClass='amber';tagText='Manageable with Discipline';
+    title='Achievable — but it requires a dedicated account.';
+    body=`To cover ${fmt(totalAnnual)}/year in fees, save ${fmt(requiredWeeklySaving*4.33)}/month consistently. Open a separate M-Shwari or SACCO account labeled "School Fees" and transfer automatically on payday. Don't touch it for anything else.`;
+  } else {
+    tagClass='green';tagText='Well Within Reach';
+    title='Your income can comfortably handle school fees.';
+    body=`${fmt(totalAnnual)}/year is only ${savingsPct.toFixed(0)}% of your monthly income when spread as a monthly saving. The key is starting now and keeping the savings separate from your everyday account so it doesn't disappear.`;
+  }
+
+  document.getElementById('sf-tag-wrap').innerHTML=`<div class="tag ${tagClass}">${tagText}</div>`;
+  document.getElementById('sf-verdict-title').textContent=title;
+  document.getElementById('sf-verdict-body').textContent=body;
+  document.getElementById('sf-metrics').innerHTML=`
+    <div class="metric"><div class="metric-val blue">${fmt(totalAnnual)}</div><div class="metric-lbl">Annual fees</div></div>
+    <div class="metric"><div class="metric-val ${savingsPct>30?'red':savingsPct>15?'amber':'green'}">${fmt(requiredWeeklySaving*4.33)}</div><div class="metric-lbl">Save/month</div></div>
+    <div class="metric"><div class="metric-val amber">${savingsPct.toFixed(0)}%</div><div class="metric-lbl">Of income</div></div>`;
+
+  // Term plans
+  let termsHtml='';
+  TERMS.forEach(term=>{
+    const weeksLeft=Math.max(1,(term.month-month)*4);
+    const weeklyNeeded=feesPerTerm/Math.max(weeksLeft,1);
+    const progress=Math.min(100,100-(weeksLeft/12*100));
+    const urgency=weeksLeft<6?'var(--red)':weeksLeft<10?'var(--amber)':'var(--green)';
+    termsHtml+=`<div class="term-card">
+      <div class="term-header">
+        <div class="term-name">${term.name}</div>
+        <div class="term-amount">${fmt(feesPerTerm)}</div>
+      </div>
+      <div class="term-prog-bar"><div class="term-prog-fill" style="width:${progress}%;background:${urgency}"></div></div>
+      <div class="term-details">${weeksLeft} weeks to go · save ${fmt(weeklyNeeded)}/week · ${fmt(weeklyNeeded*4.33)}/month</div>
+    </div>`;
+  });
+  document.getElementById('sf-terms').innerHTML=termsHtml;
+
+  const ins=[];
+  ins.push(`Open a <strong>separate M-Shwari lock savings account</strong> labeled "School Fees". Transfer ${fmt(requiredWeeklySaving*4.33)} automatically on the day you receive income — before you spend anything else.`);
+  ins.push(`Set a calendar reminder 8 weeks before each term starts. This gives you time to top up if savings are short, without needing emergency borrowing.`);
+  if(savingsPct>20)ins.push(`Consider joining a <strong>school fees SACCO</strong> — many Kenyan SACCOs offer specific school fees savings plans with small dividends that help offset cost.`);
+  document.getElementById('sf-insights').innerHTML=ins.map((i,n)=>`<div class="insight-item"><div class="insight-num">0${n+1}</div><div>${i}</div></div>`).join('');
+}
+
+// Initialize school fees month
+document.getElementById('sf-month').value=new Date().getMonth()+1;
+sfUpdateChildren();
+
+// ══════════════════════════════════════════
+// WEALTH QUIZ
+// ══════════════════════════════════════════
+const QZ_QUESTIONS=[
+  {label:'Income',text:"What's your monthly income after tax?",sub:'All sources — salary, business, side hustles.',opts:['Under $500','$500–$1,500','$1,500–$3,500','$3,500–$7,000','Over $7,000'],scores:[0,1,2,3,4]},
+  {label:'Housing',text:'What share of income goes to rent or mortgage?',sub:'The golden rule says no more than 30%.',opts:['Under 20%','20–30%','30–40%','40–50%','More than 50%'],scores:[4,3,2,1,0]},
+  {label:'Savings',text:'How much of your income do you save monthly?',sub:'Savings, stocks, pension, crypto — anything.',opts:['Nothing','Less than 5%','5–15%','15–30%','Over 30%'],scores:[0,1,2,3,4]},
+  {label:'Debt',text:'How would you describe your debt situation?',sub:'Loans, credit cards, buy-now-pay-later — all of it.',opts:['Debt-free','Small manageable debt','A few loans I handle','High debt, minimum payments','Drowning — it keeps growing'],scores:[4,3,2,1,0]},
+  {label:'Lifestyle',text:'How often do you spend to impress others?',sub:'Outfits, restaurants, gadgets, trips — be honest.',opts:['Rarely','Once a month or so','Fairly often','Very often','This is my whole budget'],scores:[4,3,2,1,0]},
+  {label:'Investments',text:'Do you have money growing without you working?',sub:'Stocks, index funds, rental income, business.',opts:['No investments','Very small start','Something meaningful','Multiple streams','My money works harder than me'],scores:[0,1,2,3,4]},
+  {label:'Clarity',text:'Do you know exactly where your money goes monthly?',sub:'A budget, spreadsheet, or app counts.',opts:['Not at all','Roughly','Mostly','Yes — I budget','Yes — I review monthly'],scores:[0,1,2,3,4]},
+];
+const QZ_VERDICTS=[
+  {min:24,v:'Actually Rich',c:'green',h:['Your money is quietly building an empire','You\'re playing the long game — and winning','Most people wish they had your discipline'],r:'You\'ve figured out what takes most people a lifetime — real wealth is invisible. No flashy proof, just compounding accounts and a clear head. Keep this up and you won\'t need to work for money much longer.',fixes:['Increase investment allocation by 5% — you\'re ready','Explore tax-advantaged accounts to protect returns','Build a second income stream to accelerate your timeline']},
+  {min:17,v:'Building Wealth',c:'green',h:['The foundation is solid — now build higher','On the right track, just needs more speed','Good habits, but there\'s a gear you haven\'t hit'],r:'You\'re doing more right than wrong — ahead of most people. The gap between where you are and Actually Rich isn\'t skill — it\'s consistency and a few strategic upgrades.',fixes:['Automate savings transfers on payday — remove the decision','Open an investment account if you haven\'t — even small amounts compound','Track every expense for 30 days — you\'ll find a leak you didn\'t know existed']},
+  {min:11,v:'Lifestyle Trap',c:'amber',h:['Looking good outside, leaking inside','The lifestyle is costing you the future','Your image is running your finances'],r:'A noticeable chunk of your money is maintaining appearances. The dinners, the fits, the upgrades that weren\'t strictly necessary. The most dangerous trap isn\'t debt — it\'s looking successful while quietly falling behind.',fixes:['Cut one image expense this month — just one','24-hour rule before any non-essential purchase over KES 1,000','Redirect savings into investments — make it automatic']},
+  {min:5,v:'Financial Illusion',c:'red',h:['The numbers don\'t match the narrative','Spending like it\'s yours when it isn\'t','The lifestyle is borrowed — the debt is real'],r:'The gap between how your finances look and how they actually are is wide. High costs, low savings, debt that isn\'t shrinking. The turnaround is possible — but it requires a hard reset, not small tweaks.',fixes:['List every debt smallest to largest — attack the smallest first','Cut your three biggest non-essential expenses this month','Tell one trusted person your real financial situation — accountability works']},
+  {min:0,v:'Wealth Emergency',c:'red',h:['This needs urgent attention — not tomorrow','The financial house is on fire','Real talk: something has to change now'],r:'This is the verdict nobody wants — but the one that matters most. Income stretched, debt mounting, savings absent. The path out exists, but it starts with radical honesty and one non-negotiable change this week.',fixes:['Write down every source of income and every fixed expense — get the real number','Contact your highest-interest lender about a payment plan or consolidation','Find one thing to cut that frees KES 1,000/month — start the emergency fund']},
+];
+
+let qzCurrent=0,qzAnswers={},qzLastResult=null;
+function qzStart(){document.getElementById('qz-intro').style.display='none';document.getElementById('qz-quiz').style.display='block';qzRenderQ();}
+function qzRestart(){document.getElementById('qz-result').style.display='none';document.getElementById('qz-intro').style.display='block';qzCurrent=0;qzAnswers={};}
+function qzRenderQ(){
+  const q=QZ_QUESTIONS[qzCurrent];
+  const pct=Math.round((qzCurrent/QZ_QUESTIONS.length)*100);
+  document.getElementById('qz-counter').textContent=`Question ${qzCurrent+1} of ${QZ_QUESTIONS.length}`;
+  document.getElementById('qz-pct').textContent=pct+'%';
+  document.getElementById('qz-prog-fill').style.width=pct+'%';
+  document.getElementById('qz-q-label').textContent=q.label;
+  document.getElementById('qz-q-text').textContent=q.text;
+  document.getElementById('qz-q-sub').textContent=q.sub;
+  document.getElementById('qz-options').innerHTML=q.opts.map((o,i)=>`<button class="quiz-opt${qzAnswers[qzCurrent]===i?' selected':''}" onclick="qzSelect(${i})">${o}</button>`).join('');
+  const nb=document.getElementById('qz-next');
+  nb.textContent=qzCurrent===QZ_QUESTIONS.length-1?'Get my verdict':'Continue';
+  nb.classList.toggle('ready',qzAnswers[qzCurrent]!==undefined);
+}
+function qzSelect(i){
+  qzAnswers[qzCurrent]=i;
+  document.querySelectorAll('.quiz-opt').forEach((o,idx)=>o.classList.toggle('selected',idx===i));
+  document.getElementById('qz-next').classList.add('ready');
+}
+function qzNext(){
+  if(qzAnswers[qzCurrent]===undefined)return;
+  if(qzCurrent<QZ_QUESTIONS.length-1){qzCurrent++;qzRenderQ();}
+  else qzShowResult();
+}
+function qzPrev(){if(qzCurrent>0){qzCurrent--;qzRenderQ();}else{document.getElementById('qz-quiz').style.display='none';document.getElementById('qz-intro').style.display='block';}}
+function qzShowResult(){
+  let total=0;
+  QZ_QUESTIONS.forEach((q,i)=>{total+=q.scores[qzAnswers[i]??0];});
+  const v=QZ_VERDICTS.find(v=>total>=v.min);
+  const headline=v.h[Math.floor(Math.random()*v.h.length)];
+  const wealthScore=Math.round((total/28)*100);
+  const savingsLabels=['~0%','~3%','~10%','~22%','~35%+'];
+  const savingsRate=savingsLabels[qzAnswers[2]??0];
+  const riskLabels=['Critical','High','Medium','Medium','Low'];
+  const debtScore=QZ_QUESTIONS[3].scores[qzAnswers[3]??0];
+  const riskLevel=riskLabels[debtScore];
+  qzLastResult={verdict:v.v,headline,wealthScore,savingsRate,riskLevel,roast:v.r,fixes:v.fixes,color:v.c};
+  document.getElementById('qz-quiz').style.display='none';
+  document.getElementById('qz-result').style.display='block';
+  document.getElementById('qz-result-tag').innerHTML=`<div class="tag ${v.c}">${v.v}</div>`;
+  document.getElementById('qz-result-title').textContent=headline;
+  document.getElementById('qz-result-metrics').innerHTML=`
+    <div class="metric"><div class="metric-val ${v.c}">${wealthScore}/100</div><div class="metric-lbl">Wealth score</div></div>
+    <div class="metric"><div class="metric-val ${v.c}">${savingsRate}</div><div class="metric-lbl">Savings rate</div></div>
+    <div class="metric"><div class="metric-val ${debtScore<=1?'red':debtScore<=2?'amber':'green'}">${riskLevel}</div><div class="metric-lbl">Risk level</div></div>`;
+  document.getElementById('qz-result-roast').textContent=v.r;
+  document.getElementById('qz-result-fixes').innerHTML=v.fixes.map((f,i)=>`<div class="insight-item"><div class="insight-num">0${i+1}</div><div>${f}</div></div>`).join('');
+}
+function qzCopy(){
+  if(!qzLastResult)return;
+  const{verdict,headline,wealthScore,savingsRate,riskLevel,roast}=qzLastResult;
+  const url='https://wealthwise-tool.vercel.app';
+  const txt=`My WealthWise Wealth Quiz Result\n\nVerdict: ${verdict}\n"${headline}"\n\nWealth score: ${wealthScore}/100 | Savings: ${savingsRate} | Risk: ${riskLevel}\n\n${roast}\n\nFind out where you stand 👇\n${url}\n\nFollow @wealthwisefinancestate`;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=document.getElementById('qz-copy-btn');
+    btn.textContent='Copied!';
+    setTimeout(()=>btn.textContent='Copy & share',2500);
+  });
+}
+
+// ══════════════════════════════════════════
+// STATEMENT ANALYZER
+// ══════════════════════════════════════════
+const AZ_CATS=[
+  {name:'Food & Dining',color:'#2ECC8A',keys:['restaurant','hotel','java','kfc','pizza','chicken','naivas','carrefour','quickmart','food','cafe','canteen','bakery','mama','nyama','ugali','chips','burger','eat','diner','buffet','jumia food','glovo','uber eats']},
+  {name:'Transport',color:'#F5A623',keys:['uber','bolt','little cab','taxi','matatu','bus','tuk','boda','parking','fuel','petrol','shell','total','kenol','rubis','oil']},
+  {name:'Utilities',color:'#5B9EF5',keys:['kplc','kenya power','nairobi water','water','wifi','internet','dstv','gotv','showmax','zuku','faiba','electricity','rent','landlord','stima']},
+  {name:'Airtime & Data',color:'#B47EF5',keys:['airtime','data bundle','bundle','okoa','bonga']},
+  {name:'Loan Apps',color:'#E85D4A',keys:['fuliza','okoa jahazi','tala','branch','zenka','okolea','haraka','timiza','berry','mshwari loan','kcb mpesa loan','pezesha','hela','kashway']},
+  {name:'Send Money',color:'#F57E7E',keys:['sent to','send money','transfer to','customer transfer']},
+  {name:'Paybill',color:'#F5C842',keys:['paybill','pay bill','business payment']},
+  {name:'Buy Goods',color:'#42C5F5',keys:['buy goods','merchant','till','shop','store','market','mall','outlet']},
+  {name:'Cash Withdrawal',color:'#F5A07E',keys:['withdraw','atm','agent withdrawal','cash out']},
+  {name:'Savings',color:'#42F5A0',keys:['mshwari save','kcb mpesa','sacco','saving','invest','equity','cooperative','stanbic','pension','mmf','cytonn']},
+  {name:'Other',color:'#605d56',keys:[]},
+];
+const LOAN_APPS=['fuliza','tala','branch','zenka','okolea','haraka','timiza','berry','mshwari loan','kcb mpesa loan','pezesha','hela','kashway'];
+const DEMO_TXNS=[
+  {desc:'Salary from Employer',paidIn:65000,withdrawn:0,category:'Other'},
+  {desc:'Freelance payment',paidIn:12000,withdrawn:0,category:'Other'},
+  {desc:'Fuliza drawdown',paidIn:2000,withdrawn:0,category:'Loan Apps'},
+  {desc:'Fuliza repayment',paidIn:0,withdrawn:2060,category:'Loan Apps'},
+  {desc:'Tala loan disbursement',paidIn:3000,withdrawn:0,category:'Loan Apps'},
+  {desc:'Tala loan repayment',paidIn:0,withdrawn:3450,category:'Loan Apps'},
+  {desc:'Branch loan received',paidIn:1500,withdrawn:0,category:'Loan Apps'},
+  {desc:'Branch repayment',paidIn:0,withdrawn:1650,category:'Loan Apps'},
+  {desc:'Fuliza drawdown',paidIn:1500,withdrawn:0,category:'Loan Apps'},
+  {desc:'Fuliza repayment',paidIn:0,withdrawn:1545,category:'Loan Apps'},
+  {desc:'Landlord rent',paidIn:0,withdrawn:22000,category:'Utilities'},
+  {desc:'KPLC token',paidIn:0,withdrawn:2000,category:'Utilities'},
+  {desc:'Zuku internet',paidIn:0,withdrawn:3500,category:'Utilities'},
+  {desc:'Java House Westgate',paidIn:0,withdrawn:3200,category:'Food & Dining'},
+  {desc:'Naivas Supermarket',paidIn:0,withdrawn:4800,category:'Food & Dining'},
+  {desc:'KFC Karen',paidIn:0,withdrawn:1850,category:'Food & Dining'},
+  {desc:'Pizza Inn CBD',paidIn:0,withdrawn:2100,category:'Food & Dining'},
+  {desc:'Glovo food delivery',paidIn:0,withdrawn:1600,category:'Food & Dining'},
+  {desc:'Quickmart grocery',paidIn:0,withdrawn:3100,category:'Food & Dining'},
+  {desc:'Uber trip CBD',paidIn:0,withdrawn:650,category:'Transport'},
+  {desc:'Bolt ride Westlands',paidIn:0,withdrawn:420,category:'Transport'},
+  {desc:'Shell fuel',paidIn:0,withdrawn:3000,category:'Transport'},
+  {desc:'Matatu fare',paidIn:0,withdrawn:800,category:'Transport'},
+  {desc:'Sent to Mary Wanjiku',paidIn:0,withdrawn:8000,category:'Send Money'},
+  {desc:'Sent to Dad',paidIn:0,withdrawn:5000,category:'Send Money'},
+  {desc:'Sent to Sister',paidIn:0,withdrawn:3000,category:'Send Money'},
+  {desc:'Data bundle 30 days',paidIn:0,withdrawn:1200,category:'Airtime & Data'},
+  {desc:'Airtime purchase',paidIn:0,withdrawn:500,category:'Airtime & Data'},
+  {desc:'ATM withdrawal',paidIn:0,withdrawn:5000,category:'Cash Withdrawal'},
+  {desc:'ATM withdrawal',paidIn:0,withdrawn:3000,category:'Cash Withdrawal'},
+  {desc:'M-Shwari savings',paidIn:0,withdrawn:2000,category:'Savings'},
+  {desc:'Buy goods clothing',paidIn:0,withdrawn:4500,category:'Buy Goods'},
+  {desc:'Cinema Westgate',paidIn:0,withdrawn:900,category:'Other'},
+];
+
+let azLastData=null,azProjTopAmt=0,azProjTopCat='';
+
+function azCatOf(desc){const d=desc.toLowerCase();for(const c of AZ_CATS){if(c.keys.some(k=>d.includes(k)))return c.name;}return 'Other';}
+
+function azAnalyze(txns,filename,isDemo){
+  const totalIn=txns.reduce((s,t)=>s+t.paidIn,0);
+  const totalOut=txns.reduce((s,t)=>s+t.withdrawn,0);
+  const netFlow=totalIn-totalOut;
+  const txnCount=txns.length;
+  const savingsRate=totalIn>0?Math.max(0,(netFlow/totalIn)*100):0;
+  const catMap={};
+  for(const t of txns)if(t.withdrawn>0){if(!catMap[t.category])catMap[t.category]=0;catMap[t.category]+=t.withdrawn;}
+  const catArr=Object.entries(catMap).map(([name,amount])=>({name,amount,pct:totalOut>0?(amount/totalOut*100):0})).sort((a,b)=>b.amount-a.amount);
+  const topOut=[...txns].filter(t=>t.withdrawn>0&&t.category!=='Loan Apps').sort((a,b)=>b.withdrawn-a.withdrawn).slice(0,5);
+  const topIn=[...txns].filter(t=>t.paidIn>0&&t.category!=='Loan Apps').sort((a,b)=>b.paidIn-a.paidIn).slice(0,3);
+  // Fuliza
+  const fDraws=txns.filter(t=>t.desc.toLowerCase().includes('fuliza')&&t.paidIn>0);
+  const fReps=txns.filter(t=>t.desc.toLowerCase().includes('fuliza')&&t.withdrawn>0);
+  const fuliza={cycles:Math.min(fDraws.length,fReps.length),totalBorrowed:fDraws.reduce((s,t)=>s+t.paidIn,0)};
+  // Multi loan
+  const loanData={};
+  for(const app of LOAN_APPS){
+    const draws=txns.filter(t=>t.desc.toLowerCase().includes(app)&&t.paidIn>0);
+    const reps=txns.filter(t=>t.desc.toLowerCase().includes(app)&&t.withdrawn>0);
+    if(draws.length>0||reps.length>0){const b=draws.reduce((s,t)=>s+t.paidIn,0);const r=reps.reduce((s,t)=>s+t.withdrawn,0);loanData[app]={borrowed:b,repaid:r,interest:Math.max(0,r-b),cycles:Math.min(draws.length,reps.length)};}
+  }
+  const loanApps=Object.keys(loanData);
+  const spiral={apps:loanApps,loanData,totalBorrowed:loanApps.reduce((s,a)=>s+loanData[a].borrowed,0),totalInterest:loanApps.reduce((s,a)=>s+loanData[a].interest,0),isSpiral:loanApps.length>=2};
+  // Invisible tax
+  const taxItems=[];
+  const paidTxns=txns.filter(t=>t.withdrawn>0).length;
+  if(paidTxns>0)taxItems.push({name:'M-Pesa transaction fees',amount:paidTxns*33,note:`~${paidTxns} transactions × KES 33`});
+  const cashTxns=txns.filter(t=>t.category==='Cash Withdrawal'&&t.withdrawn>0).length;
+  if(cashTxns>0)taxItems.push({name:'ATM/agent withdrawal fees',amount:cashTxns*34,note:`${cashTxns} withdrawals × KES 34`});
+  const lTotalDrawn=loanApps.reduce((s,a)=>s+loanData[a].borrowed,0);
+  const lTotalRepaid=loanApps.reduce((s,a)=>s+loanData[a].repaid,0);
+  if(lTotalRepaid>lTotalDrawn)taxItems.push({name:'Loan app interest',amount:lTotalRepaid-lTotalDrawn,note:`${fmt(lTotalDrawn)} borrowed → ${fmt(lTotalRepaid)} repaid`});
+  const invisTaxTotal=taxItems.reduce((s,i)=>s+i.amount,0);
+  // Identity
+  const incomeScore=totalIn>50000?90:totalIn>20000?70:totalIn>10000?50:30;
+  const debtAmt=catMap['Loan Apps']||0;
+  const debtRatio=totalOut>0?debtAmt/totalOut:0;
+  const debtScore=debtRatio>0.3?20:debtRatio>0.15?45:debtRatio>0.05?65:fuliza.cycles>1?50:90;
+  const savScore=savingsRate>30?95:savingsRate>20?80:savingsRate>10?60:savingsRate>5?40:15;
+  const essential=(catMap['Utilities']||0)+(catMap['Savings']||0);
+  const spendScore=totalOut>0&&essential/totalOut>0.4?85:totalOut>0&&essential/totalOut>0.25?65:totalOut>0&&essential/totalOut>0.15?45:30;
+  const trustScore=totalIn>0&&netFlow>=0?85:netFlow>-5000?60:40;
+  const overall=Math.round((incomeScore+debtScore+savScore+spendScore+trustScore)/5);
+  const grade=overall>=80?'A':overall>=65?'B':overall>=50?'C':overall>=35?'D':'F';
+  const gradeColor=grade==='A'?'var(--green)':grade==='B'?'#6EE8B0':grade==='C'?'var(--amber)':grade==='D'?'var(--red)':'#991f1f';
+  const identity={scores:[{name:'Income consistency',val:incomeScore,color:'var(--green)'},{name:'Debt management',val:debtScore,color:'var(--blue)'},{name:'Savings discipline',val:savScore,color:'var(--purple)'},{name:'Spending control',val:spendScore,color:'var(--amber)'},{name:'Transaction trust',val:trustScore,color:'var(--green)'}],overall,grade,gradeColor};
+  // Trajectory
+  const topCut=(catArr[0]?.amount||0)*0.20;
+  const traj={current:[],optimized:[]};
+  let cB=0,oB=0;
+  for(let i=0;i<=12;i++){cB+=netFlow;oB+=netFlow+topCut;traj.current.push(Math.round(cB));traj.optimized.push(Math.round(oB));}
+  // Verdict
+  let verdictTag,verdictColor,verdictTitle,verdictBody;
+  if(savingsRate>=20){verdictTag='Wealth Builder';verdictColor='green';verdictTitle='Your money is working correctly.';verdictBody=`You kept ${savingsRate.toFixed(0)}% of what came in — genuinely rare. Make sure that ${fmt(netFlow)} isn't sitting idle. It should be earning.`;}
+  else if(savingsRate>=5){verdictTag='Almost There';verdictColor='amber';verdictTitle='Close — but the leak is real.';verdictBody=`You saved ${savingsRate.toFixed(0)}% this period. The gap between ${fmt(totalIn)} in and ${fmt(totalOut)} out leaves you exposed to any unexpected cost.`;}
+  else if(totalIn>0&&totalOut>totalIn){verdictTag='Overspending';verdictColor='red';verdictTitle='You spent more than you earned this period.';verdictBody=`${fmt(totalOut-totalIn)} more went out than came in. That gap is covered by savings, debt, or both — and it compounds fast.`;}
+  else{verdictTag='Breaking Even';verdictColor='amber';verdictTitle='Nothing is accumulating.';verdictBody=`Almost every shilling came in and went right back out. No cushion, no growth. The categories below show exactly where.`;}
+  // Insights
+  const insights=[];
+  if(catArr[0])insights.push(`Biggest spend: <strong>${catArr[0].name}</strong> at ${catArr[0].pct.toFixed(0)}% of outflow (${fmt(catArr[0].amount)}). Cutting this 20% frees ${fmt(catArr[0].amount*0.2)}/month.`);
+  const sendPct=catMap['Send Money']?(catMap['Send Money']/totalOut*100):0;
+  if(sendPct>25)insights.push(`<strong>${sendPct.toFixed(0)}%</strong> of spending went to other people. Family obligations are real — consider setting a fixed monthly cap.`);
+  if(invisTaxTotal>500)insights.push(`Your invisible tax this period: <strong>${fmt(invisTaxTotal)}</strong>. Over a year that's ${fmt(invisTaxTotal*12)} in fees that built nothing.`);
+  if(savingsRate<5&&totalIn>0)insights.push(`Set up an <strong>automatic 5% transfer</strong> (${fmt(totalIn*0.05)}) the moment income arrives. What you don't see, you don't spend.`);
+  if(txnCount>40)insights.push(`<strong>${txnCount} transactions</strong> this period. High frequency often means impulse spending. Try a 24-hour rule before any non-essential purchase.`);
+  return{totalIn,totalOut,netFlow,txnCount,savingsRate,catArr,topOut,topIn,fuliza,spiral,taxItems,invisTaxTotal,identity,traj,verdictTag,verdictColor,verdictTitle,verdictBody,insights,filename,isDemo};
+}
+
+function azRender(data){
+  azLastData=data;
+  const{totalIn,totalOut,netFlow,txnCount,savingsRate,catArr,topOut,topIn,fuliza,spiral,taxItems,invisTaxTotal,identity,traj,verdictTag,verdictColor,verdictTitle,verdictBody,insights,filename,isDemo}=data;
+  document.getElementById('az-demo-banner').style.display=isDemo?'block':'none';
+  document.getElementById('az-filename').textContent=isDemo?'demo-mpesa-statement.pdf':filename;
+  document.getElementById('az-verdict-title').textContent=verdictTitle;
+  document.getElementById('az-verdict-sub').textContent=`${txnCount} transactions · ${savingsRate.toFixed(0)}% savings rate · Score: ${identity.overall}/100`;
+  document.getElementById('az-metrics').innerHTML=`
+    <div class="metric"><div class="metric-val green">${fmtShort(totalIn)}</div><div class="metric-lbl">Money in</div></div>
+    <div class="metric"><div class="metric-val red">${fmtShort(totalOut)}</div><div class="metric-lbl">Money out</div></div>
+    <div class="metric"><div class="metric-val ${netFlow>=0?'green':'red'}">${netFlow>=0?'+':'−'}${fmtShort(Math.abs(netFlow))}</div><div class="metric-lbl">Net flow</div></div>`;
+  // Fuliza
+  if(fuliza.cycles>0){
+    document.getElementById('az-fuliza-alert').style.display='block';
+    document.getElementById('az-fuliza-body').innerHTML=`<span class="alert-stat red">${fuliza.cycles} Fuliza borrow-repay cycle${fuliza.cycles>1?'s':''}</span> totalling <span class="alert-stat red">${fmt(fuliza.totalBorrowed)}</span> borrowed. You borrow to cover a gap, repay with fees, then need to borrow again. Break this cycle by building even a <strong>KES 2,000 emergency buffer</strong>.`;
+  }
+  // Spiral
+  if(spiral.isSpiral){
+    document.getElementById('az-spiral-alert').style.display='block';
+    const appList=spiral.apps.map(a=>a.charAt(0).toUpperCase()+a.slice(1)).join(', ');
+    document.getElementById('az-spiral-body').innerHTML=`Borrowing from <strong style="color:var(--red)">${spiral.apps.length} loan apps simultaneously</strong> (${appList}). This is the most expensive debt pattern in mobile lending.`;
+    document.getElementById('az-spiral-metrics').innerHTML=`
+      <div class="metric"><div class="metric-val red">${spiral.apps.length}</div><div class="metric-lbl">Apps active</div></div>
+      <div class="metric"><div class="metric-val red">${fmtShort(spiral.totalBorrowed)}</div><div class="metric-lbl">Total borrowed</div></div>
+      <div class="metric"><div class="metric-val red">${fmtShort(spiral.totalInterest)}</div><div class="metric-lbl">Interest paid</div></div>`;
+    const sorted=spiral.apps.slice().sort((a,b)=>(spiral.loanData[b].interest||0)-(spiral.loanData[a].interest||0));
+    document.getElementById('az-escape').innerHTML='<div style="font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.07em;font-family:\'DM Mono\',monospace;margin-bottom:.5rem">Escape sequence</div>'+sorted.map((app,i)=>`<div class="insight-item" style="margin-bottom:5px"><div class="insight-num" style="color:var(--red)">0${i+1}</div><div>Kill <strong>${app.charAt(0).toUpperCase()+app.slice(1)}</strong> first — ${fmt(spiral.loanData[app].borrowed)} borrowed, ${fmt(spiral.loanData[app].interest)} in fees.</div></div>`).join('');
+  }
+  // Tax
+  if(invisTaxTotal>500){
+    document.getElementById('az-tax-alert').style.display='block';
+    document.getElementById('az-tax-body').innerHTML=taxItems.map(i=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:0.5px solid rgba(245,166,35,.1)"><span style="color:var(--text2)">${i.name}<br><span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--text3)">${i.note}</span></span><span style="color:var(--amber);font-family:'DM Mono',monospace;font-weight:500">${fmt(i.amount)}</span></div>`).join('')+`<div style="font-size:12px;color:var(--text2);margin-top:.6rem">Annual impact if unchanged: <strong style="color:var(--amber)">${fmt(invisTaxTotal*12)}</strong></div>`;
+  }
+  // Verdict card
+  document.getElementById('az-verdict-card').innerHTML=`<div class="tag ${verdictColor}">${verdictTag}</div><div class="verdict-title">${verdictTitle}</div><div class="verdict-body" style="margin-top:.3rem">${verdictBody}</div>`;
+  // Identity card
+  const{scores,overall,grade,gradeColor}=identity;
+  const now=new Date();
+  const idNum='WW-'+Math.random().toString(36).slice(2,8).toUpperCase();
+  document.getElementById('az-fid-card').innerHTML=`
+    <div class="fid-top">
+      <div class="fid-brand">WealthWise Financial Identity</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end">
+        <div>
+          <div class="fid-score-row"><div class="fid-score-num">${overall}</div><div class="fid-score-max">/100</div></div>
+          <div style="font-size:12px;color:var(--text3);font-family:'DM Mono',monospace">credibility score</div>
+        </div>
+        <div style="text-align:right"><div class="fid-grade" style="color:${gradeColor}">${grade}</div><div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">grade</div></div>
+      </div>
+    </div>
+    <div class="fid-bottom">
+      ${scores.map(s=>`<div class="fid-bar-item"><div class="fid-bar-name">${s.name}</div><div class="fid-bar-wrap"><div class="fid-bar-fill" style="width:${s.val}%;background:${s.color}"></div></div><div class="fid-bar-val">${s.val}</div></div>`).join('')}
+      <div class="fid-use-row">
+        <div class="fid-use">SACCO applications</div><div class="fid-use">Bank loans</div><div class="fid-use">Landlord verification</div><div class="fid-use">Employer trust</div>
+      </div>
+      <div class="fid-footer"><div>${idNum}</div><div>Generated ${now.toISOString().slice(0,10)}</div></div>
+    </div>`;
+  // Trajectory
+  document.getElementById('az-traj-sub').textContent='Current path vs optimized (cut top spend 20%) over 12 months';
+  document.getElementById('az-traj-milestones').innerHTML=`
+    <div class="metric"><div class="metric-val red">${traj.current[3]<0?'−':''}${fmtShort(traj.current[3])}</div><div class="metric-lbl">3mo current</div></div>
+    <div class="metric"><div class="metric-val green">+${fmtShort(traj.optimized[6])}</div><div class="metric-lbl">6mo optimized</div></div>
+    <div class="metric"><div class="metric-val green">+${fmtShort(traj.optimized[12])}</div><div class="metric-lbl">12mo optimized</div></div>`;
+  setTimeout(()=>azDrawTraj(traj),100);
+  // Categories
+  const maxAmt=catArr[0]?.amount||1;
+  document.getElementById('az-categories').innerHTML=catArr.slice(0,7).map(c=>{
+    const cat=AZ_CATS.find(x=>x.name===c.name)||{color:'#888'};
+    return`<div class="cat-item"><div class="cat-top"><span>${c.name}</span><span style="font-family:'DM Mono',monospace">${fmt(c.amount)}</span></div><div class="cat-bar-track"><div class="cat-bar-fill" style="width:${(c.amount/maxAmt*100).toFixed(0)}%;background:${cat.color}"></div></div><div class="cat-pct">${c.pct.toFixed(1)}% of spending</div></div>`;
+  }).join('');
+  // Transactions
+  const allTop=[...topOut.map(t=>({...t,dir:'out',amt:t.withdrawn})),...topIn.map(t=>({...t,dir:'in',amt:t.paidIn}))].sort((a,b)=>b.amt-a.amt).slice(0,6);
+  document.getElementById('az-transactions').innerHTML=allTop.map(t=>`<div class="txn-item"><div class="txn-dot ${t.dir}"></div><div class="txn-info"><div class="txn-desc">${t.desc.slice(0,50)}</div><div class="txn-cat">${t.category}</div></div><div class="txn-amt ${t.dir}">${t.dir==='out'?'−':'+'}${fmt(t.amt)}</div></div>`).join('');
+  // Projector
+  azProjTopCat=catArr[0]?.name||'';azProjTopAmt=catArr[0]?.amount||0;
+  document.getElementById('az-proj-sub').textContent=`Based on: ${azProjTopCat} (${fmt(azProjTopAmt)})`;
+  azUpdateProj(20);
+  // Share card
+  const barCats=catArr.slice(0,3);
+  document.getElementById('az-share-card').innerHTML=`
+    <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:.75rem">WealthWise Statement Analysis</div>
+    <div class="tag ${verdictColor}" style="margin-bottom:.6rem">${verdictTag}</div>
+    <div style="font-size:16px;font-weight:800;margin-bottom:.75rem;line-height:1.2">${verdictTitle}</div>
+    <div style="display:flex;gap:.75rem;margin-bottom:.75rem;flex-wrap:wrap">
+      <div><div style="font-size:14px;font-weight:800;color:var(--green);font-family:'DM Mono',monospace">${fmtShort(totalIn)}</div><div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">MONEY IN</div></div>
+      <div><div style="font-size:14px;font-weight:800;color:var(--red);font-family:'DM Mono',monospace">${fmtShort(totalOut)}</div><div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">MONEY OUT</div></div>
+      <div><div style="font-size:14px;font-weight:800;color:var(--blue);font-family:'DM Mono',monospace">${overall}/100</div><div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">FIN. SCORE</div></div>
+      <div><div style="font-size:14px;font-weight:800;color:var(--amber);font-family:'DM Mono',monospace">${savingsRate.toFixed(0)}%</div><div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">SAVED</div></div>
+    </div>
+    ${barCats.map(c=>`<div style="margin-bottom:.4rem"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:3px;font-family:'DM Mono',monospace"><span>${c.name}</span><span>${c.pct.toFixed(0)}%</span></div><div style="height:3px;background:var(--surface3);border-radius:99px;overflow:hidden"><div style="height:3px;border-radius:99px;width:${(c.amount/maxAmt*100).toFixed(0)}%;background:${AZ_CATS.find(x=>x.name===c.name)?.color||'#888'}"></div></div></div>`).join('')}
+    <div style="display:flex;justify-content:space-between;font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);border-top:0.5px solid var(--border);padding-top:.6rem;margin-top:.4rem"><span>wealthwise-tool.vercel.app</span><span style="color:var(--green);font-weight:700">@wealthwisefinancestate</span></div>`;
+  // Insights
+  document.getElementById('az-insights').innerHTML=insights.slice(0,5).map((ins,i)=>`<div class="insight-item"><div class="insight-num">0${i+1}</div><div>${ins}</div></div>`).join('');
+  document.getElementById('az-upload').style.display='none';
+  document.getElementById('az-proc').style.display='none';
+  document.getElementById('az-results').style.display='block';
+  window.scrollTo({top:60,behavior:'smooth'});
+}
+
+function azDrawTraj(traj){
+  const canvas=document.getElementById('az-traj-canvas');
+  if(!canvas)return;
+  const dpr=window.devicePixelRatio||1;
+  const w=canvas.offsetWidth||640;const h=150;
+  canvas.width=w*dpr;canvas.height=h*dpr;
+  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
+  const all=[...traj.current,...traj.optimized];
+  const minV=Math.min(...all,0);const maxV=Math.max(...all,1);const range=maxV-minV||1;
+  const pad={l:10,r:10,t:10,b:22};const cw=w-pad.l-pad.r;const ch=h-pad.t-pad.b;const pts=traj.current.length;
+  function xP(i){return pad.l+(i/(pts-1))*cw;}
+  function yP(v){return pad.t+ch-((v-minV)/range)*ch;}
+  const zeroY=yP(0);
+  ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(pad.l,zeroY);ctx.lineTo(pad.l+cw,zeroY);ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.25)';ctx.font=`${9}px DM Mono`;ctx.textAlign='center';
+  [0,3,6,9,12].forEach(i=>ctx.fillText(`${i}mo`,xP(i),h-4));
+  ctx.strokeStyle='#E85D4A';ctx.lineWidth=1.5;ctx.beginPath();
+  traj.current.forEach((v,i)=>{i===0?ctx.moveTo(xP(i),yP(v)):ctx.lineTo(xP(i),yP(v));});ctx.stroke();
+  ctx.strokeStyle='#2ECC8A';ctx.lineWidth=2;ctx.beginPath();
+  traj.optimized.forEach((v,i)=>{i===0?ctx.moveTo(xP(i),yP(v)):ctx.lineTo(xP(i),yP(v));});ctx.stroke();
+}
+
+function azUpdateProj(val){
+  document.getElementById('az-proj-pct').textContent=val+'%';
+  if(!azProjTopAmt)return;
+  const monthly=azProjTopAmt*(val/100);
+  const yearly=monthly*12;
+  const toGoal=monthly>0?Math.ceil(10000/monthly):0;
+  document.getElementById('az-proj-result').innerHTML=`
+    <div class="metric"><div class="metric-val green">${fmt(monthly)}</div><div class="metric-lbl">Freed/month</div></div>
+    <div class="metric"><div class="metric-val green">${fmt(yearly)}</div><div class="metric-lbl">Freed/year</div></div>
+    <div class="metric"><div class="metric-val amber">${toGoal?toGoal+'mo':'—'}</div><div class="metric-lbl">To KES 10k goal</div></div>`;
+}
+
+function azRunDemo(){
+  document.getElementById('az-upload').style.display='none';
+  document.getElementById('az-proc').style.display='block';
+  const msgs=['Reading statement...','Detecting loan spirals...','Calculating invisible tax...','Building identity card...','Projecting trajectory...'];
+  let mi=0;const msgEl=document.getElementById('az-proc-msg');
+  const iv=setInterval(()=>{msgEl.textContent=msgs[Math.min(++mi,msgs.length-1)];},900);
+  setTimeout(()=>{clearInterval(iv);azRender(azAnalyze(DEMO_TXNS,'demo',true));},4000);
+}
+
+function azReset(){
+  document.getElementById('az-results').style.display='none';
+  document.getElementById('az-upload').style.display='block';
+  document.getElementById('az-file-input').value='';
+  document.getElementById('az-fuliza-alert').style.display='none';
+  document.getElementById('az-spiral-alert').style.display='none';
+  document.getElementById('az-tax-alert').style.display='none';
+  window.scrollTo({top:60,behavior:'smooth'});
+}
+
+function azCopyResult(){
+  if(!azLastData)return;
+  const{totalIn,totalOut,netFlow,savingsRate,verdictTag,catArr,identity,spiral,invisTaxTotal}=azLastData;
+  const topCat=catArr[0];
+  const url='https://wealthwise-tool.vercel.app';
+  let txt=`My WealthWise Financial Analysis\n\nVerdict: ${verdictTag}\nFinancial Score: ${identity.overall}/100 (Grade ${identity.grade})\nMoney in: ${fmt(totalIn)}\nMoney out: ${fmt(totalOut)}\nNet: ${netFlow>=0?'+':'−'}${fmt(Math.abs(netFlow))}\nSavings: ${savingsRate.toFixed(0)}%\nTop spend: ${topCat?.name||'—'} (${topCat?.pct.toFixed(0)||0}%)`;
+  if(spiral.isSpiral)txt+=`\nLoan apps: ${spiral.apps.length} active`;
+  if(invisTaxTotal>0)txt+=`\nInvisible tax: ${fmt(invisTaxTotal)}/period`;
+  txt+=`\n\nGet your full analysis free 👇\n${url}\n\nFollow @wealthwisefinancestate`;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=document.getElementById('az-copy-btn');
+    btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy & share result',2500);
+  });
+}
+
+// PDF parsing
+async function azProcessFile(file){
+  if(!file||file.type!=='application/pdf'){alert('Please upload a PDF file.');return;}
+  document.getElementById('az-upload').style.display='none';
+  document.getElementById('az-proc').style.display='block';
+  const msgs=['Reading statement...','Finding transactions...','Detecting loan spirals...','Calculating invisible tax...','Building identity card...','Projecting trajectory...'];
+  let mi=0;const msgEl=document.getElementById('az-proc-msg');
+  const iv=setInterval(()=>{msgEl.textContent=msgs[Math.min(++mi,msgs.length-1)];},900);
+  try{
+    const ab=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:ab}).promise;
+    let fullText='';
+    for(let i=1;i<=pdf.numPages;i++){
+      const page=await pdf.getPage(i);const content=await page.getTextContent();
+      let pt='';let lastY=null;
+      for(const item of content.items){if(lastY!==null&&Math.abs(item.transform[5]-lastY)>3)pt+='\n';pt+=item.str+' ';lastY=item.transform[5];}
+      fullText+=pt+'\n';
+    }
+    clearInterval(iv);
+    if(fullText.trim().length<100){alert('Could not read this PDF. Try downloading a fresh statement from MySafaricom.');document.getElementById('az-upload').style.display='block';document.getElementById('az-proc').style.display='none';return;}
+    const txns=azParsePdf(fullText);
+    if(txns.length<2){alert('Found fewer than 2 transactions. Try a different statement format.');document.getElementById('az-upload').style.display='block';document.getElementById('az-proc').style.display='none';return;}
+    azRender(azAnalyze(txns,file.name,false));
+  }catch(e){clearInterval(iv);alert('Could not process this file.');document.getElementById('az-upload').style.display='block';document.getElementById('az-proc').style.display='none';}
+}
+
+function azParsePdf(text){
+  const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);const txns=[];
+  for(const line of lines){
+    if(line.length<10)continue;
+    if(/page|statement|safaricom|customer|account|period|opening|closing|dear|regards/i.test(line)&&!/\d{3,}/.test(line))continue;
+    const amounts=line.match(/[\d,]+\.\d{2}/g);if(!amounts)continue;
+    const parsed=amounts.map(parseA);let paidIn=0,withdrawn=0;
+    if(parsed.length>=3){paidIn=parsed[parsed.length-3]||0;withdrawn=parsed[parsed.length-2]||0;}
+    else if(parsed.length===2){if(/received|from|deposit|salary|credit/i.test(line))paidIn=parsed[0];else withdrawn=parsed[0];}
+    else if(parsed.length===1){if(/received|from|deposit|salary|credit/i.test(line))paidIn=parsed[0];else if(/sent|withdraw|buy|pay|purchase|debit/i.test(line))withdrawn=parsed[0];}
+    if(paidIn>10000000||withdrawn>10000000)continue;
+    let desc=line.replace(/[A-Z]{2,3}\d{8,}/g,'').replace(/\d{1,2}\/\d{1,2}\/\d{2,4}/g,'').replace(/\d{1,2}:\d{2}\s*(AM|PM)?/gi,'').replace(/[\d,]+\.\d{2}/g,'').replace(/completed|success|failed/gi,'').replace(/\s+/g,' ').trim();
+    if(!desc||desc.length<3)desc='Transaction';
+    if(paidIn>0||withdrawn>0)txns.push({desc,paidIn,withdrawn,category:azCatOf(line)});
+  }
+  return txns;
+}
+
+// Dropzone events
+const azDz=document.getElementById('az-dropzone');
+const azFi=document.getElementById('az-file-input');
+azFi.addEventListener('change',e=>{if(e.target.files[0])azProcessFile(e.target.files[0]);});
+azDz.addEventListener('dragover',e=>{e.preventDefault();azDz.classList.add('drag');});
+azDz.addEventListener('dragleave',()=>azDz.classList.remove('drag'));
+azDz.addEventListener('drop',e=>{e.preventDefault();azDz.classList.remove('drag');const f=e.dataTransfer.files[0];if(f)azProcessFile(f);});
+
+window.addEventListener('resize',()=>{if(azLastData)azDrawTraj(azLastData.traj);});
+</script>
+</body>
+</html>
